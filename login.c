@@ -1,4 +1,6 @@
-#include <stdio.h>
+#include <stdio.h> // For printf()
+#include <stdlib.h> // For exit()
+#include <string.h> // For strcmp()
 #include "login.h"
 
 void initDatabase(struct database *db)
@@ -19,6 +21,10 @@ void addUser(struct database *db, struct login *user)
             db->users[i] = *user;
             break;
         }
+    }
+    if (db->users[9].username[0] != '\0')
+    {
+        printf("Database is full!\n");
     }
 }
 
@@ -48,6 +54,17 @@ int findUser(struct database *db, struct login *user)
     return -1;
 }
 
+void printDatabase(struct database *db)
+{
+    for (int i = 0; i < 10; i++)
+    {
+        if (db->users[i].username[0] != '\0')
+        {
+            printf("Username: %s Password: %s\n", db->users[i].username, db->users[i].password);
+        }
+    }
+}
+
 void registerUser(struct login *user)
 {
     printf("Enter username: ");
@@ -56,30 +73,25 @@ void registerUser(struct login *user)
     scanf("%s", user->password);
 }
 
-void loginUser(struct database *db)
+void loginUser(struct login *user)
 {
-    struct login user;
-
-    char username[20];
-    char password[20];
-
     printf("Enter username: ");
-    scanf("%s", username);
+    scanf("%s", user->username);
     printf("Enter password: ");
-    scanf("%s", password);
+    scanf("%s", user->password);
+}
 
-    strcpy(user.username, username);
-    strcpy(user.password, password);
+void checkUser(struct database *db, struct login *user)
+{
+    int index = findUser(db, user);
 
-    int current_user = findUser(&db, &user);
-
-    if (current_user != (-1) && strcmp(password, db->users[current_user]->password) == 0)
+    if (index == -1)
     {
-        printf("Login successful!\n");
+        printf("User not found!\n");
     }
     else
     {
-        printf("Login failed!\n");
+        printf("User found!\n");
     }
 }
 

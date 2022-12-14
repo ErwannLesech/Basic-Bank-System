@@ -25,6 +25,9 @@ void removeUser(struct database *db, struct login *user);
 // Function to find a user in the database
 int findUser(struct database *db, struct login *user);
 
+// Function to print the database
+void printDatabase(struct database *db);
+
 // USER FUNCTIONS
 
 // Function to register a new user
@@ -32,6 +35,9 @@ void registerUser(struct login *user);
 
 // Function to login a user
 void loginUser(struct login *user);
+
+// Function to check if a user exists in the database
+void checkUser(struct database *db, struct login *user);
 
 // Function to exit the program
 void exitProgram();
