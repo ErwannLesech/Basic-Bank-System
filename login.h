@@ -1,32 +1,36 @@
-#pragma once
+#ifndef LOGIN_H
+#define LOGIN_H
+#include "bank.h"
 
 struct login
 {
     char username[20];
     char password[20];
+    struct bank_account accounts[10];
 };
 
-struct database
+struct bank
 {
     struct login users[10];
+    struct bank_account accounts[100];
 };
 
 // DATABASE FUNCTIONS
 
-// Function to initialize the database
-void initDatabase(struct database *db);
+// Function to initialize the bank database
+void initDatabase(struct bank *db);
 
-// Function to add a user to the database
-void addUser(struct database *db, struct login *user);
+// Function to add a user to the bank database
+void addUser(struct bank *db, struct login *user);
 
-// Function to remove a user from the database
-void removeUser(struct database *db, struct login *user);
+// Function to remove a user from the bank database
+void removeUser(struct bank *db, struct login *user);
 
-// Function to find a user in the database
-int findUser(struct database *db, struct login *user);
+// Function to find a user in the bank database
+int findUser(struct bank *db, struct login *user);
 
-// Function to print the database
-void printDatabase(struct database *db);
+// Function to print the bank database
+void printDatabase(struct bank *db);
 
 // USER FUNCTIONS
 
@@ -37,7 +41,12 @@ void registerUser(struct login *user);
 void loginUser(struct login *user);
 
 // Function to check if a user exists in the database
-void checkUser(struct database *db, struct login *user);
+int checkUser(struct bank *db, struct login *user);
+
+// Function to print a user
+void printUser(struct login *user);
 
 // Function to exit the program
 void exitProgram();
+
+#endif
