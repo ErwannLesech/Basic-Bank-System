@@ -1,6 +1,5 @@
 #include <stdio.h> // For printf()
 #include <stdlib.h> // For exit()
-#include "login.h" // For login system
 #include "bank.h" // For bank system
 
 // Main function of a login system in C 
@@ -16,7 +15,7 @@ int main()
     int amount = 0;
     int account_number = 0;
     int account_number2 = 0;
-    struct login user;
+    struct login user = {"", "", {0, 0}};
     int userIndex = 1;
 
     while (1)

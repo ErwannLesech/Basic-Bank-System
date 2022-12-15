@@ -8,9 +8,8 @@ LDLIBS =
 
 exe: *.c
 	${CC} ${CFLAGS} -c -o main.o main.c
-	${CC} ${CFLAGS} -c -o login.o login.c
 	${CC} ${CFLAGS} -c -o bank.o bank.c
-	${CC} main.o login.o bank.o -o exe
+	${CC} main.o bank.o -o exe
 
 
 
