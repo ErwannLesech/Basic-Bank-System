@@ -1,2 +1,2 @@
-# Basic-login-system
-Training C project : Build a basic login system that allows users to create accounts and log in with a password in C
+# Basic-bank-system
+Training C project : Build a basic bank system that allows users to log in, register or delete an account and then, manage bank accounts in C
