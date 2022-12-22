@@ -37,7 +37,7 @@ int main()
             char password[20];
             scanf("%s", password);
             struct client client = create_client(name, surname, login, password);
-            print_client(client);
+            print_client(bank, client);
             add_client(bank, client);
             break;
         case 2:

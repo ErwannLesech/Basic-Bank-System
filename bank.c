@@ -17,14 +17,7 @@ void print_bank(struct bank bank)
     {
         if(bank.clients[i].name[0] != '\0')
         {
-            printf("Client %d: %s %s - %s %s\n", i, bank.clients[i].name, bank.clients[i].surname, bank.clients[i].login, bank.clients[i].password);
-            for (int j = 0; j < 10; j++)
-            {
-                if(bank.clients[i].ibans[j] != 0)
-                {
-                    printf("Account %d: %d - %d\n", j, bank.clients[i].ibans[j], bank.accounts[bank.clients[i].ibans[j]].balance);
-                }
-            }
+            print_client(bank, bank.clients[i]);
         }
     }
 }
@@ -152,7 +145,7 @@ void print_client(struct bank bank, struct client client)
     {
         if(client.ibans[i] != 0)
         {
-            printf("Account %d: %d - %d\n", i, client.ibans[i], bank.accounts[client.ibans[i]].balance);
+            printf("Account %d: iban - %d balance - %d\n", i, client.ibans[i], bank.accounts[client.ibans[i]].balance);
         }
     }
 }
