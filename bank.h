@@ -1,77 +1,60 @@
-#ifndef BANK_H
-#define BANK_H
+#pragma once
 
-struct bank_account
+struct account
 {
-    int account_number;
-    int account_balance;
+    int iban; // 2 digits
+    int balance;
 };
 
-struct login
+struct client
 {
-    char username[20];
+    char name[20];
+    char surname[20];
+    char login[20];
     char password[20];
-    struct bank_account accounts[10];
+    int ibans[10]; // 10 x 2 digits
 };
 
 struct bank
 {
-    struct login users[10];
-    struct bank_account accounts[100];
+    struct client *clients;
+    struct account *accounts;
 };
 
-// DATABASE FUNCTIONS
+// Bank functions
 
-// Function to initialize the bank database
-void initDatabase(struct bank *db);
+// Create a bank with 10 clients and 50 accounts
+struct bank create_bank();
 
-// Function to add a user to the bank database
-void addUser(struct bank *db, struct login *user);
+// print all clients and their accounts
+void print_bank(struct bank bank);
 
-// Function to remove a user from the bank database
-void removeUser(struct bank *db, struct login *user);
+// Create a client
+struct client create_client(char name[20], char surname[20], char login[20], char password[20]);
 
-// Function to find a user in the bank database
-int findUser(struct bank *db, struct login *user);
+// Add a client to the bank
+void add_client(struct bank bank, struct client client);
 
-// Function to print the bank database
-void printDatabase(struct bank *db);
+// Find a client in the bank
+struct client find_client(struct bank bank, char login[20], char password[20]);
 
-// USER FUNCTIONS
+// Remove a client from the bank
+void remove_client(struct bank bank, struct client client);
 
-// Function to register a new user
-void registerUser(struct login *user);
+// Add an account to a client
+void add_account(struct bank bank, struct client client);
 
-// Function to login a user
-void loginUser(struct login *user);
+// Remove an account from a client
+void remove_account(struct bank bank, struct client client);
 
-// Function to check if a user exists in the database
-int checkUser(struct bank *db, struct login *user);
+// Deposit money to an account
+void deposit(struct bank bank, int iban, int amount);
 
-// Function to print a user
-void printUser(struct login *user);
+// Withdraw money from an account
+void withdraw(struct bank bank, int iban, int amount);
 
-// Function to exit the program
-void exitProgram();
+// Transfer money from one account to another
+void transfer(struct bank bank, int iban, int iban2, int amount);
 
-// BANK FUNCTIONS
-
-// Function to create a new bank account
-void createAccount(struct login *user, struct bank *db);
-
-// Function to delete a bank account
-void deleteAccount(struct login *user, int account_number, struct bank *db);
-
-// Function to print a bank account
-void printAccount(int account_number, struct bank *db);
-
-// Function to deposit money to a bank account
-void depositMoney(int account_number, int amount, struct bank *db);
-
-// Function to withdraw money from a bank account
-void withdrawMoney(int account_number, int amount, struct bank *db);
-
-// Function to transfer money from one bank account to another
-void transferMoney(int account1_number, int account2_number, int amount, struct bank *db);
-
-#endif
+// Client functions
+void print_client(struct bank bank, struct client client);

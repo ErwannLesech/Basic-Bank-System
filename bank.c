@@ -1,260 +1,158 @@
-#include <stdio.h> // For printf()
-#include <stdlib.h> // For exit()
-#include <string.h> // For strcmp()
-#include "bank.h" // For login system
+#include "bank.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-// DATABASE FUNCTIONS
-
-void initDatabase(struct bank *db)
+struct bank create_bank()
 {
-    for (int i = 0; i < 10; i++)
-    {
-        db->users[i].username[0] = '\0';
-        db->users[i].password[0] = '\0';
-    }
-    for (int i = 0; i < 100; i++)
-    {
-        db->accounts[i].account_number = 0;
-        db->accounts[i].account_balance = 0;
-    }
+    struct bank bank;
+    bank.clients = malloc(10 * sizeof(struct client));
+    bank.accounts = malloc(50 * sizeof(struct account));
+    return bank;
 }
 
-void addUser(struct bank *db, struct login *user)
+void print_bank(struct bank bank)
 {
     for (int i = 0; i < 10; i++)
     {
-        if (db->users[i].username[0] == '\0')
+        if(bank.clients[i].name[0] != '\0')
         {
-            db->users[i] = *user;
-            db->accounts[i] = *user->accounts;
-            break;
-        }
-    }
-    if (db->users[9].username[0] != '\0')
-    {
-        printf("Database is full!\n");
-    }
-}
-
-void removeUser(struct bank *db, struct login *user)
-{
-    for (int i = 0; i < 10; i++)
-    {
-        if (strcmp(db->users[i].username, user->username) == 0)
-        {
-            db->users[i].username[0] = '\0';
-            db->users[i].password[0] = '\0';
-            break;
-        }
-    }
-}
-
-int findUser(struct bank *db, struct login *user)
-{
-    for (int i = 0; i < 10; i++)
-    {
-        if (strcmp(db->users[i].username, user->username) == 0)
-        {
-            if (strcmp(db->users[i].password, user->password) == 0)
+            printf("Client %d: %s %s - %s %s\n", i, bank.clients[i].name, bank.clients[i].surname, bank.clients[i].login, bank.clients[i].password);
+            for (int j = 0; j < 10; j++)
             {
-                return i;
-            }
-        }
-    }
-
-    return -1;
-}
-
-void printDatabase(struct bank *db)
-{
-    printf("Database:\n--------\n");
-    for (int i = 0; i < 10; i++)
-    {
-        if (db->users[i].username[0] != '\0')
-        {
-            printf("Username: %s Password: %s\n", db->users[i].username, db->users[i].password);
-            for (size_t i = 0; i < 10; i++)
-            {
-                if (db->users[i].accounts[i].account_number != 0)
+                if(bank.clients[i].ibans[j] != 0)
                 {
-                    printf("Account number: %d - Account balance: %d\n", db->users[i].accounts[i].account_number, db->users[i].accounts[i].account_balance);
+                    printf("Account %d: %d - %d\n", j, bank.clients[i].ibans[j], bank.accounts[bank.clients[i].ibans[j]].balance);
                 }
             }
-            
         }
     }
-    printf("--------\n");
 }
 
-// FUNCTIONS FOR USER
-
-void registerUser(struct login *user)
+struct client create_client(char name[20], char surname[20], char login[20], char password[20])
 {
-    printf("Enter username: ");
-    scanf("%s", user->username);
-    printf("Enter password: ");
-    scanf("%s", user->password);
-    for (size_t i = 0; i < 10; i++)
+    struct client client;
+    strcpy(client.name, name);
+    strcpy(client.surname, surname);
+    strcpy(client.login, login);
+    strcpy(client.password, password);
+    for (int i = 0; i < 10; i++)
     {
-        user->accounts[i].account_number = 0;
-        user->accounts[i].account_balance = 0;
+        client.ibans[i] = 0;
     }
-    
+    return client;
 }
 
-void loginUser(struct login *user)
+void add_client(struct bank bank, struct client client)
 {
-    printf("Enter username: ");
-    scanf("%s", user->username);
-    printf("Enter password: ");
-    scanf("%s", user->password);
-}
-
-int checkUser(struct bank *db, struct login *user)
-{
-    int index = findUser(db, user);
-
-    if (index == -1)
+    for (int i = 0; i < 10; i++)
     {
-        printf("User not found!\n");
-        return -1;
-    }
-    else
-    {
-        printf("User found!\n");
-        return index;
-    }
-}
-
-void printUser(struct login *user)
-{
-    printf("Username: %s Password: %s\n", user->username, user->password);
-    for (size_t i = 0; i < 10; i++)
-    {
-        if (user->accounts[i].account_number != 0)
+        if(bank.clients[i].name[0] == '\0')
         {
-            printf("Account number: %d - Account balance: %d\n", user->accounts[i].account_number, user->accounts[i].account_balance);
+            bank.clients[i] = client;
+            return;
         }
     }
-    
 }
 
-void exitProgram()
+struct client find_client(struct bank bank, char login[20], char password[20])
 {
-    printf("Exiting program...\n");
-    exit(0);
-}
-
-// FUNCTIONS FOR BANK ACCOUNTS
-
-void createAccount(struct login *user, struct bank *db)
-{
-    struct bank_account *account = malloc(sizeof(struct bank_account));
-    printf("Enter account number: ");
-    scanf("%d", &account->account_number);
-    printf("Enter account balance: ");
-    scanf("%d", &account->account_balance);
-    for (int i = 0; i < 100; i++)
+    for (int i = 0; i < 10; i++)
     {
-        if (db->accounts[i].account_number == account->account_number)
+        if(bank.clients[i].name[0] != '\0')
         {
-            printf("Account already exists!\n");
-            break;
-        }
-        
-        if (db->accounts[i].account_number == 0)
-        {
-            db->accounts[i] = *account;
-            break;
-        }
-    }
-    if (db->accounts[99].account_number != 0)
-    {
-        printf("Database is full!\n");
-    }
-    else
-    {
-        for(int i = 0; i < 10; i++)
-        {
-            if (user->accounts[i].account_number = 0)
+            if(strcmp(bank.clients[i].login, login) == 0 && strcmp(bank.clients[i].password, password) == 0)
             {
-                user->accounts[i] = *account;
-                break;
+                return bank.clients[i];
             }
         }
     }
 }
 
-void deleteAccount(struct login *user, int account_number, struct bank *db)
+void remove_client(struct bank bank, struct client client)
 {
-    for (int i = 0; i < 100; i++)
+    for (int i = 0; i < 10; i++)
     {
-        if (db->accounts[i].account_number == account_number)
+        if(bank.clients[i].name[0] != '\0')
         {
-            db->accounts[i].account_number = 0;
-            db->accounts[i].account_balance = 0;
-            break;
+            if(strcmp(bank.clients[i].name, client.name) == 0 && strcmp(bank.clients[i].surname, client.surname) == 0 && strcmp(bank.clients[i].login, client.login) == 0 && strcmp(bank.clients[i].password, client.password) == 0)
+            {
+                bank.clients[i].name[0] = '\0';
+                return;
+            }
         }
     }
-    for (size_t i = 0; i < 10; i++)
+}
+
+void add_account(struct bank bank, struct client client)
+{
+    for (int i = 0; i < 10; i++)
     {
-        if (user->accounts[i].account_number == account_number)
+        if(bank.clients[i].name[0] != '\0')
         {
-            user->accounts[i].account_number = 0;
-            user->accounts[i].account_balance = 0;
-            break;
+            if(strcmp(bank.clients[i].name, client.name) == 0 && strcmp(bank.clients[i].surname, client.surname) == 0 && strcmp(bank.clients[i].login, client.login) == 0 && strcmp(bank.clients[i].password, client.password) == 0)
+            {
+                for (int j = 0; j < 10; j++)
+                {
+                    if(bank.clients[i].ibans[j] == 0)
+                    {
+                        bank.clients[i].ibans[j] = rand() % 50 + 1;
+                        bank.accounts[bank.clients[i].ibans[j]].balance = 0;
+                        bank.accounts[bank.clients[i].ibans[j]].iban = bank.clients[i].ibans[j];
+                        return;
+                    }
+                }
+            }
         }
     }
+}
+
+void remove_account(struct bank bank, struct client client)
+{
+    for (int i = 0; i < 10; i++)
+    {
+        if(bank.clients[i].name[0] != '\0')
+        {
+            if(strcmp(bank.clients[i].name, client.name) == 0 && strcmp(bank.clients[i].surname, client.surname) == 0 && strcmp(bank.clients[i].login, client.login) == 0 && strcmp(bank.clients[i].password, client.password) == 0)
+            {
+                for (int j = 0; j < 10; j++)
+                {
+                    if(bank.clients[i].ibans[j] != 0)
+                    {
+                        bank.clients[i].ibans[j] = 0;
+                        return;
+                    }
+                }
+            }
+        }
+    }
+}
+
+void deposit(struct bank bank, int iban, int amount)
+{
+    bank.accounts[iban].balance += amount;
+}
+
+void withdraw(struct bank bank, int iban, int amount)
+{
+    bank.accounts[iban].balance -= amount;
+}
+
+void transfer(struct bank bank, int iban1, int iban2, int amount)
+{
+    bank.accounts[iban1].balance -= amount;
+    bank.accounts[iban2].balance += amount;
+}
+
+void print_client(struct bank bank, struct client client)
+{
+    printf("Client: %s %s - %s %s\n", client.name, client.surname, client.login, client.password);
     
-}
-
-void printAccount(int account_number, struct bank *db)
-{
-    for (int i = 0; i < 100; i++)
+    for (int i = 0; i < 10; i++)
     {
-        if (db->accounts[i].account_number == account_number)
+        if(client.ibans[i] != 0)
         {
-            printf("Account number: %d \n Account balance: %d \n", db->accounts[i].account_number, db->accounts[i].account_balance);
-            break;
-        }
-    }
-}
-
-void depositMoney(int account_number, int amount, struct bank *db)
-{
-    for (int i = 0; i < 100; i++)
-    {
-        if (db->accounts[i].account_number == account_number)
-        {
-            db->accounts[i].account_balance += amount;
-            break;
-        }
-    }
-}
-
-void withdrawMoney(int account_number, int amount, struct bank *db)
-{
-    for (int i = 0; i < 100; i++)
-    {
-        if (db->accounts[i].account_number == account_number)
-        {
-            db->accounts[i].account_balance -= amount;
-            break;
-        }
-    }
-}
-
-void transferMoney(int account1_number, int account2_number, int amount, struct bank *db)
-{
-    for (int i = 0; i < 100; i++)
-    {
-        if (db->accounts[i].account_number == account1_number)
-        {
-            db->accounts[i].account_balance -= amount;
-        }
-        if (db->accounts[i].account_number == account2_number)
-        {
-            db->accounts[i].account_balance += amount;
+            printf("Account %d: %d - %d\n", i, client.ibans[i], bank.accounts[client.ibans[i]].balance);
         }
     }
 }

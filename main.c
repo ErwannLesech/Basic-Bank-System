@@ -1,202 +1,130 @@
-#include <stdio.h> // For printf()
-#include <stdlib.h> // For exit()
-#include "bank.h" // For bank system
+#include <stdio.h>
+#include <err.h>
+#include <stdlib.h>
+#include <string.h>
 
-// Main function of a login system in C 
+#include "bank.h"
+
 int main()
 {
-    printf("Welcome to the login system!\n");
-
-    struct bank db;
-
-    initDatabase(&db);
+    struct bank bank = create_bank();
 
     int choice = 0;
-    int amount = 0;
-    int account_number = 0;
-    int account_number2 = 0;
-    struct login user = {"", "", {0, 0}};
-    int userIndex = 1;
 
-    while (1)
+    printf("Welcome to the bank!\n");
+    while(choice != 3)
     {
-        printDatabase(&db);
-        printf(" 1. Login\n 2. Register\n 3. Reset account\n 4. Exit\n Your choice:");
-        if(scanf("%i", &choice) > 0)
+        print_bank(bank);
+        printf("Choose an option:\n");
+        printf("1. Register in the bank\n");
+        printf("2. Login\n");
+        printf("3. Exit\n");
+        scanf("%d", &choice);
+        switch (choice)
         {
-            switch(choice)
+        case 1:
+            printf("Register in the bank\n");
+            printf("Name: ");
+            char name[20];
+            scanf("%s", name);
+            printf("Surname: ");
+            char surname[20];
+            scanf("%s", surname);
+            printf("Login: ");
+            char login[20];
+            scanf("%s", login);
+            printf("Password: ");
+            char password[20];
+            scanf("%s", password);
+            struct client client = create_client(name, surname, login, password);
+            print_client(client);
+            add_client(bank, client);
+            break;
+        case 2:
+            printf("Login\n");
+            printf("Login: ");
+            char login2[20];
+            scanf("%s", login2);
+            printf("Password: ");
+            char password2[20];
+            scanf("%s", password2);
+            struct client client2 = find_client(bank, login2, password2);
+            if(client2.name[0] == '\0')
             {
-            case 1:
-                printf("Login\n");
-                loginUser(&user);
-                if (findUser(&db, &user) != -1)
-                {
-                    while(userIndex)
-                    {
-                        printUser(&user);
-                        printf(" 1. Create account\n 2. Print account\n 3. Manage an account\n 4. Exit\n Your choice:");
-                        if(scanf("%i", &choice) > 0)
-                        {
-                            switch(choice)
-                            {
-                            case 1:
-                                printf("Create account\n");
-                                createAccount(&user, &db);
-                                break;
-                            
-                            case 2:
-                                printf("Print account\n");
-                                printf("Account number:");
-                                if(scanf("%i", &account_number) > 0)
-                                {
-                                    printAccount(account_number, &db);
-                                }
-                                else
-                                {
-                                    printf("Invalid choice!\n");
-                                }
-                                break;
-                            
-                            case 3:
-                                printf("Manage an account\n");
-                                printf(" 1. Deposit\n 2. Withdraw\n 3. Transfer\n 4. Exit\n Your choice:");
-                                if(scanf("%i", &choice) > 0)
-                                {
-                                    switch(choice)
-                                    {
-                                    case 1:
-                                        printf("Deposit\n");
-                                        printf("Account number:");
-                                        if(scanf("%i", &account_number) > 0)
-                                        {
-                                            printf("Amount:");
-                                            if(scanf("%i", &amount) > 0)
-                                            {
-                                                depositMoney(account_number, amount, &db);
-                                            }
-                                            else
-                                            {
-                                                printf("Invalid choice!\n");
-                                            }
-                                        }
-                                        else
-                                        {
-                                            printf("Invalid choice!\n");
-                                        }
-                                        break;
-                                    
-                                    case 2:
-                                        printf("Withdraw\n");
-                                        printf("Account number:");
-                                        if(scanf("%i", &account_number) > 0)
-                                        {
-                                            printf("Amount:");
-                                            if(scanf("%i", &amount) > 0)
-                                            {
-                                                withdrawMoney(choice, amount, &db);
-                                            }
-                                            else
-                                            {
-                                                printf("Invalid choice!\n");
-                                            }
-                                        }
-                                        else
-                                        {
-                                            printf("Invalid choice!\n");
-                                        }
-                                        break;
-                                    
-                                    case 3:
-                                        printf("Transfer\n");
-                                        printf("Account number:");
-                                        if(scanf("%i", &account_number) > 0)
-                                        {
-                                            printf("Amount:");
-                                            if(scanf("%i", &amount) > 0)
-                                            {
-                                                printf("Account number of destination:");
-                                                if(scanf("%i", &account_number2) > 0)
-                                                {
-                                                    transferMoney(account_number, account_number2, amount, &db);
-                                                }
-                                                else
-                                                {
-                                                    printf("Invalid choice!\n");
-                                                }
-                                            }
-                                            else
-                                            {
-                                                printf("Invalid choice!\n");
-                                            }
-                                        }
-                                        else
-                                        {
-                                            printf("Invalid choice!\n");
-                                        }
-                                        break;
-                                    
-                                    case 4:
-                                        printf("Exit\n");
-                                        break;
-                                    
-                                    default:
-                                        printf("Invalid choice!\n");
-                                        break;
-                                    }
-                                }
-                                else
-                                {
-                                    printf("Invalid choice!\n");
-                                }
-
-                            case 4:
-                                printf("Exit\n");
-                                userIndex = 0;
-                                break;
-
-                            default:
-                                printf("Invalid choice!\n");
-                                break;
-                            }
-                        }
-                        else
-                        {
-                            printf("Invalid choice!\n");
-                        }
-                    }
-                    
-                }
-                else
-                {
-                    printf("Login failed!\n");
-                }
-                break;
-            
-            case 2:
-                printf("Register\n");
-                registerUser(&user);
-                addUser(&db, &user);
-                break;
-            
-            case 3:
-                printf("Reset account\n");
-                loginUser(&user);
-                removeUser(&db, &user);
-                break;
-
-            case 4:
-                exitProgram();
-                break;
-            
-            default:
-                printf("Invalid choice!\n");
+                printf("Wrong login or password!\n");
                 break;
             }
+            int choice2 = 0;
+            while (choice2 != 6 && client2.name[0] != '\0')
+            {
+                printf("Welcome %s %s!\n", client2.name, client2.surname);
+                printf("Choose an option:\n");
+                printf("1. Create account\n");
+                printf("2. Deposit\n");
+                printf("3. Withdraw\n");
+                printf("4. Transfer\n");
+                printf("5. Print profile\n");
+                printf("6. Exit\n");
+                
+                scanf("%d", &choice2);
+                switch (choice2)
+                {
+                case 1:
+                    printf("Create account\n");
+                    add_account(bank, client2);
+                    print_client(bank, client2);
+                    break;
+                case 2:
+                    printf("Deposit\n");
+                    printf("IBAN: ");
+                    int iban = 0;
+                    scanf("%d", &iban);
+                    printf("Amount: ");
+                    int amount = 0;
+                    scanf("%d", &amount);
+                    deposit(bank, iban, amount);
+                    break;
+                case 3:
+                    printf("Withdraw\n");
+                    int iban2 = 0;
+                    scanf("%d", &iban2);
+                    printf("Amount: ");
+                    int amount2 = 0;
+                    scanf("%d", &amount2);
+                    withdraw(bank, iban2, amount2);
+                    break;
+                case 4:
+                    printf("Transfer\n");
+                    printf("IBAN: ");
+                    int iban3 = 0;
+                    scanf("%d", &iban3);
+                    printf("IBAN2: ");
+                    int iban4 = 0;
+                    scanf("%d", &iban4);
+                    printf("Amount: ");
+                    int amount3 = 0;
+                    scanf("%d", &amount3);
+                    transfer(bank, iban3, iban4, amount3);
+                    break;
+                case 5: 
+                    printf("Print profile\n");
+                    print_client(bank, client2);
+                    break;
+                case 6:
+                    printf("Exit\n");
+                    break;
+                default:
+                    break;
+                }   
+            }
+            break;
+        case 3:
+            printf("Exit\n");
+            break;
+        default:
+            break;
         }
-        else
-        {
-            printf("Invalid choice!\n");
-        }
-
     }
+
+    return EXIT_SUCCESS;
 }
